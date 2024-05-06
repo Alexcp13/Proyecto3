@@ -1,41 +1,74 @@
 
-// https://api.unsplash.com/search/photos?query=dog&client_id=3lddQ9AdBFfvjT_QGDX9BCPQ1Xz9Mg40bc7RpaZt06o
-// "https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w1NzI0NDl8MHwxfHNlYXJjaHwxfHxkb2d8ZW58MHx8fHwxNzA5MDYwOTE5fDA&ixlib=rb-4.0.3&q=85"
 async function fetchPhoto(busqueda) {
 
-  return await fetch(`https://api.unsplash.com/search/photos?query=${busqueda}&client_id=3lddQ9AdBFfvjT_QGDX9BCPQ1Xz9Mg40bc7RpaZt06o`)
-    .then((result) => {
-      return result.json();
-    })
-    .then((result) => {
-      return result.results.map(Element => Element.urls.full)
-    })
-    .catch(error => {
-      console.error("Problema con la petición", error);
-    });
+  console.log(busqueda)
+  try {
+    const response = await fetch(`https://api.unsplash.com/search/photos?query=${busqueda}&client_id=3lddQ9AdBFfvjT_QGDX9BCPQ1Xz9Mg40bc7RpaZt06o`);
+    const data = await response.json();
+
+    if (data.results && data.results.length > 0) {
+      const photo = data.results.map(element => element.urls.full);
+      mostrarFotos(photo);
+    } else {
+      throw new Error("No se encontraron fotos para la búsqueda.");
+    }
+  } catch (error) {
+    console.error("Problema con la petición", error);
+    throw error;
+  }
+}
+
+async function cargarImagenesAleatorias() {
+
+  const terminosAleatorios = ["street", "country", "cats"]
+
+  const terminoAleatorio = terminosAleatorios[Math.floor(Math.random() * terminosAleatorios.length)];
+
+  const fotosAleatorias = await fetchPhoto(terminoAleatorio);
+
+
+
+
 
 }
 
+function mostrarFotos(fotos) {
+
+  const photoSection = document.getElementById("photo");
+  photoSection.innerHTML = "";
+  fotos.forEach(url => {
+    const imagen = document.createElement('img');
+    imagen.src = url;
+
+    imagen.classList.add('photos');
+    photoSection.appendChild(imagen);
+  });
+
+}
 
 async function guardarInput() {
   const busqueda = document.getElementById('miBuscador').value;
-  console.log(busqueda)
 
-  const photos = await fetchPhoto(busqueda);
-  const photoSection = document.getElementById('photo');
-  photoSection.innerHTML = '';
-  console.log(photos)
-  photos.forEach(element => {
-    const imagen = document.createElement('img');
-    imagen.src = element
-    imagen.width = 300;
-    imagen.height = 200;
+  try {
+    if (busqueda === '') {
+      cargarImagenesAleatorias()
+    } else {
+      const fotosBuscadas = await fetchPhoto(busqueda);
+    }
 
-    imagen.classList.add('photos');
 
-    photoSection.appendChild(imagen)
-  });
+  } catch (error) {
+    const photoSection = document.getElementById('photo');
+    photoSection.innerHTML = '';
+    const errorMessage = document.createElement('p');
+    errorMessage.textContent = error.message;
+    photoSection.appendChild(errorMessage);
+  }
+
+
 }
 
 
 document.getElementById('miBuscador').addEventListener('input', guardarInput);
+
+window.onload = cargarImagenesAleatorias;

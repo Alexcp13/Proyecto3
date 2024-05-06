@@ -13,14 +13,18 @@
 
   <header id="top">
     <nav>
+      <ul>
+        <li><button onclick="fetchPhoto('dog')">Perros</button></li>
+        <li><button onclick="fetchPhoto('sea')">Mar</button></li>
+        <li><button onclick="fetchPhoto('tree')">Arboles</button></li>
+      </ul>
 
-      <li><button><a href="Inicio">Inicio</a></button></li>
-      <li><button><a href="Inicio">Hoy</a></button></li>
-      <li><button><a href="Inicio">Crear</a></button></li>
-      <li><input id="miBuscador" type="text" placeholder="Buscador"></li>
-      <button id=invisible onclick="guardarInput()">Enviar</button>
     </nav>
-
+    <img class="burguer" src="./assets/menu.png" alt="">
+    <div>
+      <input id="miBuscador" type="text" placeholder="Buscador">
+      <button id=invisible onclick="guardarInput()">Enviar</button>
+    </div>
   </header>
   <section id="photo">
 
